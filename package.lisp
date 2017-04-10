@@ -20,10 +20,11 @@
    #:+sock-cloexec+
    #:file-descriptor
    #:socket
-   #:close-sock
+   #:with-socket
    #:bind-inet
    #:listen-sock
    #:accept
+   #:with-accept
    #:recv
    #:recv-sequence
    #:send

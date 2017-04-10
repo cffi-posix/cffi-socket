@@ -17,14 +17,10 @@
       (error-errno "socket"))
     s))
 
-(defcfun ("close" c-close) :int
-  (fd :int))
-
-(defun close-sock (fd)
-  (let ((r (c-close fd)))
-    (when (< r 0)
-      (error-errno "close"))
-    r))
+(defmacro with-socket ((var domain type protocol) &body body)
+  `(let ((,var (socket ,domain ,type ,protocol)))
+     (unwind-protect (progn ,@body)
+       (cffi-posix:close ,var))))
 
 (defcstruct sockaddr
   (sa-family sa-family-t)
@@ -111,6 +107,11 @@
 	(when (< s 0)
 	  (error-errno "accept"))
 	(values s addr)))))
+
+(defmacro with-accept ((var listening-fd) &body body)
+  `(let ((,var (accept ,listening-fd)))
+     (unwind-protect (progn ,@body)
+       (cffi-posix:close ,var))))
 
 (defcfun ("recv" c-recv) ssize-t
   (sockfd :int)
