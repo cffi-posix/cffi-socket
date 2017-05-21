@@ -43,7 +43,3 @@
 
 (ctype sa-family-t "sa_family_t")
 (ctype in-port-t "in_port_t")
-
-;;  Errors
-
-(cvar ("errno" errno) :int)

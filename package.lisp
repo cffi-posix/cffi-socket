@@ -4,8 +4,8 @@
 (defpackage :cffi-sockets
   (:use
    :cffi
-   :cffi-errno
-   :common-lisp)
+   :common-lisp
+   :errno)
   (:export
    #:+af-unix+
    #:+af-local+
