@@ -160,3 +160,13 @@
      for r = (send sockfd buffer flags :start start :end end)
      do (when (= r 0) (error "end of file"))
      do (incf start r)))
+
+(defcfun ("shutdown" c-shutdown) :int
+  (sockfd :int)
+  (how :int))
+
+(defun shutdown (sockfd &optional read write)
+  (when (or read write)
+    (c-shutdown sockfd (cond ((and read write) +shut-rdwr+)
+			     (read +shut-rd+)
+			     (write +shut-wr+)))))

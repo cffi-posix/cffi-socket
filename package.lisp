@@ -18,6 +18,9 @@
    #:+sock-raw+
    #:+sock-nonblock+
    #:+sock-cloexec+
+   #:+shut-rd+
+   #:+shut-wr+
+   #:+shut-rdwr+
    #:file-descriptor
    #:socket
    #:with-socket
@@ -28,4 +31,5 @@
    #:recv
    #:recv-sequence
    #:send
-   #:send-sequence))
+   #:send-sequence
+   #:shutdown))

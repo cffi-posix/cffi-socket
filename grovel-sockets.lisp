@@ -20,6 +20,10 @@
 (constant (+sock-nonblock+ "SOCK_NONBLOCK"))
 (constant (+sock-cloexec+  "SOCK_CLOEXEC"))
 
+(constant (+shut-rd+   "SHUT_RD"))
+(constant (+shut-wr+   "SHUT_WR"))
+(constant (+shut-rdwr+ "SHUT_RDWR"))
+
 (ctype socklen-t "socklen_t")
 (ctype size-t "size_t")
 (ctype ssize-t "ssize_t")
