@@ -8,7 +8,7 @@
 
 (defsystem "cffi-sockets"
   :defsystem-depends-on ("cffi-grovel")
-  :depends-on ("cffi" "cffi-errno" "cffi-posix")
+  :depends-on ("cffi" "cffi-errno" "cffi-unistd")
   :components
   ((:file "package")
    (:cffi-grovel-file "grovel-sockets" :depends-on ("package"))

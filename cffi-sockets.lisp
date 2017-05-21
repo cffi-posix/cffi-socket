@@ -20,7 +20,7 @@
 (defmacro with-socket ((var domain type protocol) &body body)
   `(let ((,var (socket ,domain ,type ,protocol)))
      (unwind-protect (progn ,@body)
-       (cffi-posix:close ,var))))
+       (unistd:close ,var))))
 
 (defcstruct sockaddr
   (sa-family sa-family-t)
@@ -111,7 +111,7 @@
 (defmacro with-accept ((var listening-fd) &body body)
   `(let ((,var (accept ,listening-fd)))
      (unwind-protect (progn ,@body)
-       (cffi-posix:close ,var))))
+       (unistd:close ,var))))
 
 (defcfun ("recv" c-recv) ssize-t
   (sockfd :int)
