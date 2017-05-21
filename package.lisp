@@ -2,6 +2,7 @@
 (in-package :common-lisp)
 
 (defpackage :cffi-socket
+  (:nicknames :socket)
   (:use
    :cffi
    :common-lisp
