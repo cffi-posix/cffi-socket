@@ -1,5 +1,5 @@
 
-(in-package :cffi-sockets)
+(in-package :cffi-socket)
 
 ;;  Sockets
 

@@ -1,11 +1,13 @@
 
 (in-package :common-lisp)
 
-(defpackage :cffi-sockets
+(defpackage :cffi-socket
   (:use
    :cffi
    :common-lisp
    :errno)
+  (:shadow
+   #:listen)
   (:export
    #:+af-unix+
    #:+af-local+
@@ -25,7 +27,7 @@
    #:socket
    #:with-socket
    #:bind-inet
-   #:listen-sock
+   #:listen
    #:accept
    #:with-accept
    #:recv

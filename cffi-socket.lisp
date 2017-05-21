@@ -1,5 +1,5 @@
 
-(in-package :cffi-sockets)
+(in-package :cffi-socket)
 
 ;;  Sockets
 
@@ -88,7 +88,7 @@
   (sockfd :int)
   (backlog :int))
 
-(defun listen-sock (sockfd backlog)
+(defun listen (sockfd backlog)
   (let ((r (c-listen sockfd backlog)))
     (when (< r 0)
       (error-errno "listen"))
@@ -104,14 +104,21 @@
     (with-foreign-object (addrlen :int)
       (setf (mem-ref addrlen :int) (foreign-type-size '(:struct sockaddr-in)))
       (let ((s (c-accept sockfd addr addrlen)))
-	(when (< s 0)
-	  (error-errno "accept"))
-	(values s addr)))))
+	(cond ((<= 0 s)
+	       (values s addr))
+	      ((or (= errno +eagain+)
+		   (= errno +ewouldblock+))
+	       nil)
+	      (t
+	       (error-errno "accept")))))))
 
-(defmacro with-accept ((var listening-fd) &body body)
-  `(let ((,var (accept ,listening-fd)))
-     (unwind-protect (progn ,@body)
-       (unistd:close ,var))))
+(defmacro with-accept ((fd-var &optional (addr-var (gensym))) listening-fd
+		       &body body)
+  (declare (type symbol fd-var addr-var))
+  `(multiple-value-bind (,fd-var ,addr-var) (accept ,listening-fd)
+     (when ,fd-var
+       (unwind-protect (progn ,@body)
+	 (unistd:close ,fd-var)))))
 
 (defcfun ("recv" c-recv) ssize-t
   (sockfd :int)
