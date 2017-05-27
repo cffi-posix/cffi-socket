@@ -6,7 +6,11 @@
 
 (in-package :cffi-socket.system)
 
-(defsystem "cffi-socket"
+(defsystem :cffi-socket
+  :name "cffi-socket"
+  :author "Thomas de Grivel <thoxdg@gmail.com>"
+  :version "0.1"
+  :description "Common Lisp wrapper for BSD sockets"
   :defsystem-depends-on ("cffi-grovel")
   :depends-on ("cffi" "cffi-errno" "cffi-unistd")
   :components
