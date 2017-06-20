@@ -134,6 +134,7 @@
 		       &body body)
   (declare (type symbol fd-var addr-var))
   `(multiple-value-bind (,fd-var ,addr-var) (accept ,listening-fd)
+     (declare (ignorable ,addr-var))
      (when ,fd-var
        (unwind-protect (progn ,@body)
          (shutdown ,fd-var t t)
