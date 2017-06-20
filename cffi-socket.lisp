@@ -37,6 +37,7 @@
 (defmacro with-socket ((var domain type protocol) &body body)
   `(let ((,var (socket ,domain ,type ,protocol)))
      (unwind-protect (progn ,@body)
+       (shutdown ,var t t)
        (unistd:close ,var))))
 
 (defcstruct sockaddr
@@ -135,6 +136,7 @@
   `(multiple-value-bind (,fd-var ,addr-var) (accept ,listening-fd)
      (when ,fd-var
        (unwind-protect (progn ,@body)
+         (shutdown ,fd-var t t)
 	 (unistd:close ,fd-var)))))
 
 (defcfun ("recv" c-recv) ssize-t
