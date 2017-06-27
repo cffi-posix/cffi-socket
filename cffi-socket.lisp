@@ -44,10 +44,27 @@
   (sa-family sa-family-t)
   (sa-data :char :count 14))
 
+(defcfun ("connect" c-connect) :int
+  (sockfd :int)
+  (addr (:pointer (:struct sockaddr)))
+  (addrlen socklen-t))
+
+(defun connect (sockfd addr addrlen)
+  (let ((r (c-connect sockfd addr addrlen)))
+    (when (< r 0)
+      (error-errno "connect"))
+    r))
+
 (defcfun ("bind" c-bind) :int
   (sockfd :int)
   (addr (:pointer (:struct sockaddr)))
-  (addrlen :int))
+  (addrlen socklen-t))
+
+(defun bind (sockfd addr addrlen)
+  (let ((r (c-bind sockfd addr addrlen)))
+    (when (< r 0)
+      (error-errno "bind"))
+    r))
 
 (defcfun "htons" uint16-t
   (hostshort uint16-t))
@@ -87,20 +104,24 @@
     ((unsigned-byte 32) x)
     (string (or (inet-addr-from-string x)))))
 
+(defmacro with-sockaddr-in ((sockaddr sockaddrlen host port) &body body)
+  (declare (type symbol sockaddr sockaddrlen))
+  `(with-foreign-object (,sockaddr '(:struct sockaddr))
+     (with-foreign-slots ((sin-family sin-port sin-addr)
+                          ,sockaddr (:struct sockaddr-in))
+       (setf sin-family +af-inet+
+             sin-port (htons ,port)
+             sin-addr (inet-addr ,host)))
+     (let ((,sockaddrlen (foreign-type-size '(:struct sockaddr-in))))
+       ,@body)))
 
-(defun bind-inet (sockfd addr port)
-  (with-foreign-object (addr-in '(:struct sockaddr))
-    (with-foreign-slots ((sin-family sin-port sin-addr)
-                         addr-in (:struct sockaddr-in))
-      (let ((inet-addr (inet-addr addr)))
-        (setf sin-family +af-inet+
-              sin-port (htons port)
-              sin-addr inet-addr)))
-    (let ((r (c-bind sockfd addr-in (foreign-type-size
-                                     '(:struct sockaddr-in)))))
-      (when (< r 0)
-        (error-errno "bind"))
-      r)))
+(defun connect-inet (sockfd host port)
+  (with-sockaddr-in (addr addrlen host port)
+    (connect sockfd addr addrlen)))
+
+(defun bind-inet (sockfd host port)
+  (with-sockaddr-in (addr addr-len host port)
+    (bind sockfd addr addr-len)))
 
 (defcfun ("listen" c-listen) :int
   (sockfd :int)

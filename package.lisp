@@ -44,6 +44,10 @@
    #:file-descriptor
    #:socket
    #:with-socket
+   #:with-sockaddr-in
+   #:connect
+   #:connect-inet
+   #:bind
    #:bind-inet
    #:listen
    #:accept
