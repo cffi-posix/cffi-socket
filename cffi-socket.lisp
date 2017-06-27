@@ -147,16 +147,18 @@
                (values s addr))
               ((or (= errno +eagain+)
                    (= errno +ewouldblock+))
-               nil)
+               :non-blocking)
               (t
                (error-errno "accept")))))))
 
-(defmacro with-accept ((fd-var &optional (addr-var (gensym))) listening-fd
+(defmacro with-accept ((fd-var &optional addr-var) listening-fd
                        &body body)
   (declare (type symbol fd-var addr-var))
+  (unless addr-var
+    (setq addr-var (gensym)))
   `(multiple-value-bind (,fd-var ,addr-var) (accept ,listening-fd)
      (declare (ignorable ,addr-var))
-     (when ,fd-var
+     (unless (eq :non-blocking ,fd-var)
        (unwind-protect (progn ,@body)
          (shutdown ,fd-var t t)
          (unistd:close ,fd-var)))))
