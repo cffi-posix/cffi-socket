@@ -71,15 +71,6 @@
 
 ;;  IP
 
-(defcstruct sockaddr-in
-  (sin-family sa-family-t)
-  (sin-port in-port-t)
-  (sin-addr uint32-t)
-  (sin-zero :unsigned-char :count #.(- (foreign-type-size '(:struct sockaddr))
-                                       (foreign-type-size 'sa-family-t)
-                                       (foreign-type-size 'in-port-t)
-                                       (foreign-type-size 'uint32-t))))
-
 (defun inet-addr-from-string (x &key (start 0) (end (length x)))
   (ignore-errors
     (let ((addr 0))
@@ -157,11 +148,13 @@
   (unless addr-var
     (setq addr-var (gensym)))
   `(multiple-value-bind (,fd-var ,addr-var) (accept ,listening-fd)
-     (declare (ignorable ,addr-var))
      (unless (eq :non-blocking ,fd-var)
-       (unwind-protect (progn ,@body)
+       (unwind-protect (let ((,fd-var ,fd-var)
+                             (,addr-var ,addr-var))
+                         (declare (ignorable ,addr-var))
+                         ,@body)
          (shutdown ,fd-var t t)
-         (unistd:close ,fd-var)))))
+         (unistd:c-close ,fd-var)))))
 
 (defcfun ("recv" c-recv) ssize-t
   (sockfd :int)
