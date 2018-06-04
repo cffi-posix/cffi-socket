@@ -34,11 +34,15 @@
       (error-errno "socket"))
     s))
 
+(defun socket-close (fd)
+  (unless (= -1 (unistd:c-dup2 fd fd))
+    (shutdown fd)
+    (unistd:close fd)))
+
 (defmacro with-socket ((var domain type protocol) &body body)
   `(let ((,var (socket ,domain ,type ,protocol)))
      (unwind-protect (progn ,@body)
-       (shutdown ,var t t)
-       (unistd:close ,var))))
+       (socket-close ,var))))
 
 (defcstruct sockaddr
   (sa-family sa-family-t)
@@ -153,8 +157,7 @@
                              (,addr-var ,addr-var))
                          (declare (ignorable ,addr-var))
                          ,@body)
-         (shutdown ,fd-var t t)
-         (unistd:c-close ,fd-var)))))
+         (socket-close ,fd-var)))))
 
 (defcfun ("recv" c-recv) ssize-t
   (sockfd :int)
