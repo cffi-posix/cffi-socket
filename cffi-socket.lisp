@@ -76,22 +76,27 @@
 ;;  IP
 
 (defun inet-addr-from-string (x &key (start 0) (end (length x)))
-  (ignore-errors
+  (block nil
     (let ((addr 0))
       (flet ((eat-byte ()
                (let ((b 0))
-                 (loop while (< start end)
-                    for c = (char x start)
-                    while (char<= #\0 c #\9)
-                    do (setf b (+ (* 10 b) (- (char-code c) (char-code #\0))))
-                    do (incf start))
+                 (loop
+                    (unless (< start end)
+                      (return))
+                    (let ((c (char x start)))
+                      (unless (char<= #\0 c #\9)
+                        (return))
+                      (setf b (+ (* 10 b) (- (char-code c) (char-code #\0))))
+                      (incf start)))
                  (setf addr (logior (ash addr 8) b)))))
         (dotimes (_ 3)
           (eat-byte)
-          (assert (char= #\. (char x start)))
+          (unless (char= #\. (char x start))
+            (return nil))
           (incf start))
         (eat-byte)
-        (assert (= end start)))
+        (unless (= end start)
+          (return nil)))
       addr)))
 
 (defun inet-addr (x)
