@@ -44,10 +44,6 @@
      (unwind-protect (progn ,@body)
        (socket-close ,var))))
 
-(defcstruct sockaddr
-  (sa-family sa-family-t)
-  (sa-data :char :count 14))
-
 (defcfun ("connect" c-connect) :int
   (sockfd :int)
   (addr (:pointer (:struct sockaddr)))

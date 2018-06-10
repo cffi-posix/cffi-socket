@@ -61,6 +61,10 @@
 (ctype sa-family-t "sa_family_t")
 (ctype in-port-t "in_port_t")
 
+(cstruct sockaddr "struct sockaddr"
+         (sa-family "sa_family" :type sa-family-t)
+         (sa-data "sa_data" :type :char :count 14))
+
 #+linux
 (cstruct sockaddr-in "struct sockaddr_in"
          (sin-family "sin_family" :type sa-family-t)
