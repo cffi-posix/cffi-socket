@@ -63,14 +63,10 @@
 
 #+linux
 (cstruct sockaddr-in "struct sockaddr_in"
-         (sin-family "sin_family" sa-family-t)
-         (sin-port "sin_port" in-port-t)
-         (sin-addr "sin_addr" uint32-t)
-         (sin-zero "sin_zero" :unsigned-char
-                   :count #.(- (foreign-type-size '(:struct sockaddr))
-                               (foreign-type-size 'sa-family-t)
-                               (foreign-type-size 'in-port-t)
-                               (foreign-type-size 'uint32-t))))
+         (sin-family "sin_family" :type sa-family-t)
+         (sin-port "sin_port" :type in-port-t)
+         (sin-addr "sin_addr" :type uint32-t)
+         (sin-zero "sin_zero" :type :unsigned-char))
 
 #+openbsd
 (ctype u-int-8 "u_int8_t")
