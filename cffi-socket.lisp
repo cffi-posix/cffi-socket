@@ -183,10 +183,13 @@
         r))))
 
 (defun recv-sequence (sockfd buffer flags &key (start 0) (end (length buffer)))
-  (loop while (< start end)
-     for r = (recv sockfd buffer flags :start start :end end)
-     do (when (= r 0) (error "end of file"))
-     do (incf start r)))
+  (loop
+     (unless (< start end)
+       (return))
+     (let ((r (recv sockfd buffer flags :start start :end end)))
+       (when (= r 0)
+         (error "end of file"))
+       (incf start r))))
 
 (defcfun ("send" c-send) ssize-t
   (sockfd :int)
@@ -207,10 +210,13 @@
         r))))
 
 (defun send-sequence (sockfd buffer flags &key (start 0) (end (length buffer)))
-  (loop while (< start end)
-     for r = (send sockfd buffer flags :start start :end end)
-     do (when (= r 0) (error "end of file"))
-     do (incf start r)))
+  (loop
+     (unless (< start end)
+       (return))
+     (let ((r (send sockfd buffer flags :start start :end end)))
+       (when (= r 0)
+         (error "end of file"))
+       (incf start r))))
 
 (defcfun ("shutdown" c-shutdown) :int
   (sockfd :int)
