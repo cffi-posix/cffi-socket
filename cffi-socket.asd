@@ -34,3 +34,10 @@
   ((:file "package")
    (:cffi-grovel-file "grovel-socket" :depends-on ("package"))
    (:file "cffi-socket" :depends-on ("grovel-socket"))))
+
+#+clisp
+(ignore-errors
+  (ext:without-package-lock (:socket)
+    (ext:without-package-lock (:ext)
+      (handler-bind ((error (invoke-restart 'continue)))
+        (delete-package :socket)))))
