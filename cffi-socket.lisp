@@ -63,8 +63,11 @@
       (error-errno "bind"))
     r))
 
-(defcfun "htons" uint16-t
+(defcfun ("htons" c-htons) uint16-t
   (hostshort uint16-t))
+
+(defun htons (hostshort)
+  (c-htons hostshort))
 
 ;;  IP
 
