@@ -32,7 +32,7 @@
     s))
 
 (defun socket-close (fd)
-  (unless (= -1 (unistd:c-dup2 fd fd))
+  (unless (< (the fixnum (unistd:c-dup2 fd fd)) 0)
     (shutdown fd)
     (unistd:close fd)))
 
