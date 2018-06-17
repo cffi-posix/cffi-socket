@@ -20,9 +20,6 @@
 
 ;;  Sockets
 
-(deftype file-descriptor ()
-  `(unsigned-byte (1- (* 8 (foreign-type-size :int)))))
-
 (defcfun ("socket" c-socket) :int
   (domain :int)
   (type :int)
