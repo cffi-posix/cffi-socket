@@ -27,33 +27,45 @@
   (:shadow
    #:listen)
   (:export
-   #:+af-unix+
-   #:+af-local+
    #:+af-inet+
    #:+af-inet6+
    #:+af-ipx+
+   #:+af-local+
    #:+af-packet+
-   #:+sock-stream+
-   #:+sock-dgram+
-   #:+sock-raw+
-   #:+sock-nonblock+
-   #:+sock-cloexec+
+   #:+af-unix+
    #:+shut-rd+
-   #:+shut-wr+
    #:+shut-rdwr+
-   #:file-descriptor
-   #:socket
-   #:with-socket
-   #:with-sockaddr-in
-   #:connect
-   #:connect-inet
+   #:+shut-wr+
+   #:+sock-cloexec+
+   #:+sock-dgram+
+   #:+sock-nonblock+
+   #:+sock-raw+
+   #:+sock-stream+
+   #:accept
    #:bind
    #:bind-inet
+   #:c-accept
+   #:c-bind
+   #:c-connect
+   #:c-htons
+   #:c-listen
+   #:c-recv
+   #:c-send
+   #:c-shutdown
+   #:c-socket
+   #:connect
+   #:connect-inet
+   #:htons
+   #:inet-addr
+   #:inet-addr-from-string
    #:listen
-   #:accept
-   #:with-accept
    #:recv
    #:recv-sequence
    #:send
    #:send-sequence
-   #:shutdown))
+   #:shutdown
+   #:socket
+   #:with-accept
+   #:with-sockaddr-in
+   #:with-socket
+   ))
