@@ -49,6 +49,7 @@
    #:c-connect
    #:c-htons
    #:c-listen
+   #:c-ntohs
    #:c-recv
    #:c-send
    #:c-shutdown
@@ -59,11 +60,13 @@
    #:inet-addr
    #:inet-addr-from-string
    #:listen
+   #:ntohs
    #:recv
    #:recv-sequence
    #:send
    #:send-sequence
    #:shutdown
+   #:sockaddr-to-string
    #:socket
    #:with-accept
    #:with-sockaddr-in

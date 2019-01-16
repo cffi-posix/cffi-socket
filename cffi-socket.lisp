@@ -69,6 +69,24 @@
 (defun htons (hostshort)
   (c-htons hostshort))
 
+(defcfun ("ntohs" c-ntohs) uint16-t
+  (netshort uint16-t))
+
+(defun ntohs (netshort)
+  (c-ntohs netshort))
+
+(defcfun ("htonl" c-htonl) uint32-t
+  (host32 uint32-t))
+
+(defun htonl (host32)
+  (c-htonl host32))
+
+(defcfun ("ntohl" c-ntohl) uint32-t
+  (net32 uint32-t))
+
+(defun ntohl (net32)
+  (c-ntohl net32))
+
 ;;  IP
 
 (defun inet-addr-from-string (x &key (start 0) (end (length x)))
@@ -100,6 +118,16 @@
     ((unsigned-byte 32) x)
     (string (or (inet-addr-from-string x)))))
 
+(defun sockaddr-to-string (sockaddr)
+  (with-foreign-slots ((sin-port sin-addr)
+                       sockaddr (:struct sockaddr-in))
+    (format nil "~D.~D.~D.~D:~D"
+            (mod      sin-addr      256)
+            (mod (ash sin-addr -8 ) 256)
+            (mod (ash sin-addr -16) 256)
+            (mod (ash sin-addr -24) 256)
+            (ntohs sin-port))))
+
 (defmacro with-sockaddr-in ((sockaddr sockaddrlen host port) &body body)
   (declare (type symbol sockaddr sockaddrlen))
   `(with-foreign-object (,sockaddr '(:struct sockaddr))
@@ -107,7 +135,7 @@
                           ,sockaddr (:struct sockaddr-in))
        (setf sin-family +af-inet+
              sin-port (htons ,port)
-             sin-addr (inet-addr ,host)))
+             sin-addr (htonl (inet-addr ,host))))
      (let ((,sockaddrlen (foreign-type-size '(:struct sockaddr-in))))
        ,@body)))
 
@@ -138,7 +166,7 @@
   (with-foreign-object (addr '(:struct sockaddr-in))
     (with-foreign-object (addrlen :int)
       (setf (mem-ref addrlen :int) (foreign-type-size '(:struct sockaddr-in)))
-      (let ((s (c-accept sockfd addr addrlen)))
+      (let ((s (the integer (c-accept sockfd addr addrlen))))
         (cond ((<= 0 s)
                (values s addr))
               ((or (= errno +eagain+)

@@ -51,6 +51,10 @@
 
 (ctype uint16-t "uint16_t")
 (ctype uint32-t "uint32_t")
+(ctype in-addr-t "in_addr_t")
+
+(cstruct in-addr "struct in_addr"
+         (s-addr "s_addr" :type in-addr-t))
 
 ;;  IP
 
