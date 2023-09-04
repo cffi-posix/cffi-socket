@@ -33,6 +33,7 @@
    #:+af-local+
    #:+af-packet+
    #:+af-unix+
+   #:+af-netlink+
    #:+shut-rd+
    #:+shut-rdwr+
    #:+shut-wr+
@@ -51,7 +52,9 @@
    #:c-listen
    #:c-ntohs
    #:c-recv
+   #:c-recvfrom
    #:c-send
+   #:c-sendto
    #:c-shutdown
    #:c-socket
    #:connect
@@ -62,8 +65,10 @@
    #:listen
    #:ntohs
    #:recv
+   #:recv-from
    #:recv-sequence
    #:send
+   #:send-to
    #:send-sequence
    #:shutdown
    #:sockaddr-to-string
