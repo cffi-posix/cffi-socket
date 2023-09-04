@@ -206,6 +206,26 @@
           (error-errno "recv"))
         r))))
 
+(defcfun ("recvfrom" c-recvfrom) ssize-t
+  (sockfd :int)
+  (buf :pointer)
+  (len size-t)
+  (flags :int)
+  (src-addr (:pointer (:struct sockaddr)))
+  (addrlen (:pointer socklen-t)))
+
+(defun recv-from (sockfd buffer flags &key (srcaddr (null-pointer)) (addrlen (null-pointer)) (start 0) (end (length buffer)))
+  (declare (type (array (unsigned-byte 8)) buffer))
+  (let ((len (- end start)))
+    (with-foreign-pointer (buf len)
+      (let ((r (c-recvfrom sockfd buf len flags srcaddr addrlen)))
+        (dotimes (i len)
+          (setf (aref buffer start) (mem-aref buf :unsigned-char i))
+          (incf start))
+        (when (< r 0)
+          (error-errno "recv-from"))
+        r))))
+
 (defun recv-sequence (sockfd buffer flags &key (start 0) (end (length buffer)))
   (loop
      (unless (< start end)
@@ -241,6 +261,26 @@
        (when (= r 0)
          (error "end of file"))
        (incf start r))))
+
+(defcfun ("sendto" c-sendto) ssize-t
+  (sockfd :int)
+  (buf :pointer)
+  (len size-t)
+  (flags :int)
+  (dest-addr (:pointer (:struct sockaddr)))
+  (addrlen socklen-t))
+
+(defun send-to (sockfd buffer flags dstaddr addrlen &key (start 0) (end (length buffer)))
+  (declare (type (array (unsigned-byte 8)) buffer))
+  (let ((len (- end start)))
+    (with-foreign-pointer (buf len)
+      (let ((r (c-sendto sockfd buf len flags dstaddr addrlen)))
+        (dotimes (i len)
+          (setf (aref buffer start) (mem-aref buf :unsigned-char i))
+          (incf start))
+        (when (< r 0)
+          (error-errno "send-to"))
+        r))))
 
 (defcfun ("shutdown" c-shutdown) :int
   (sockfd :int)
